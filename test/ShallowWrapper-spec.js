@@ -3496,4 +3496,41 @@ describe('shallow', () => {
     });
   });
 
+  describe('out-of-band state updates', () => {
+    const promise = Promise.resolve();
+    const returnsPromise = () => promise;
+    const Child = () => <span />;
+
+    class Test extends React.Component {
+      asyncUpdate() {
+        returnsPromise().then(() => {
+          this.setState({ showSpan: true });
+        });
+      }
+
+      render() {
+        return (
+          <div>
+            {this.state && this.state.showSpan && <span className="show-me" />}
+            <button className="async-btn" onClick={() => this.asyncUpdate()} />
+            <Child callback={() => this.setState({ showSpan: true })} />
+          </div>
+        );
+      }
+    }
+
+    it('should have updated output after an asynchronous setState', () => {
+      const wrapper = shallow(<Test />);
+      wrapper.find('.async-btn').simulate('click');
+      return promise.then(() => {
+        expect(wrapper.find('.show-me').length).to.equal(1);
+      });
+    });
+
+    it('should have updated output after child prop callback invokes setState', () => {
+      const wrapper = shallow(<Test />);
+      wrapper.find(Child).props().callback();
+      expect(wrapper.find('.show-me').length).to.equal(1);
+    });
+  });
 });
