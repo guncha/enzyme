@@ -11,6 +11,7 @@
     "version": "npm run build",
     "clean": "rimraf build",
     "lint": "eslint src/** test/**",
+    "bench": "npm run build && node ./bench.js",
     "check": "npm run lint && npm run test:all",
     "build": "babel src --out-dir build",
     "test": "npm run test:only",
@@ -51,6 +52,7 @@
   "author": "Leland Richardson <leland.richardson@airbnb.com>",
   "license": "MIT",
   "dependencies": {
+    "benchmark": "^2.1.0",
     "cheerio": "^0.20.0",
     "is-subset": "^0.1.1",
     "lodash": "^4.13.1",
